@@ -25,17 +25,21 @@ HEIGHT = 30
 MARGIN = 5
 
 # Do the math to figure out our screen dimensions
-WINDOW_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
-WINDOW_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
+BOARD_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
+BOARD_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 WINDOW_TITLE = "Tetris"
+
+WINDOW_WIDTH = 3 * BOARD_WIDTH
+WINDOW_HEIGHT = BOARD_HEIGHT
+BOARD_MARGIN = BOARD_WIDTH
 
 
 elements_colors = [
+    'red',
     'blue',
     'green',
     'grey',
     'purple',
-    'red',
     'yellow'
 ]
 
@@ -64,7 +68,7 @@ tetris_shapes = [
 
 
 def create_elements_textures():
-    """ Create a list of images for sprites based on the global colors. """
+    """ Create a list of images for sprites based on the global textures. """
     black = PIL.Image.new('RGBA', (WIDTH, HEIGHT), (0,   0,   0, 255))
     new_textures = [arcade.Texture(black)]
     for color in elements_colors:
@@ -123,7 +127,7 @@ class GameView(arcade.View):
 
     def __init__(self):
         super().__init__()
-        self.window.background_color = arcade.color.WHITE
+        self.window.background_color = arcade.color.ANTIQUE_WHITE
 
         self.board = None
         self.start_frame = 0
@@ -164,8 +168,8 @@ class GameView(arcade.View):
             for column in range(len(self.board[0])):
                 sprite = arcade.Sprite(elements_texture_list[0])
                 sprite.textures = elements_texture_list
-                sprite.center_x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
-                sprite.center_y = WINDOW_HEIGHT - (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
+                sprite.center_x = BOARD_MARGIN + (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
+                sprite.center_y = BOARD_HEIGHT - (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
 
                 self.board_sprite_list.append(sprite)
 
@@ -249,12 +253,12 @@ class GameView(arcade.View):
                 # Figure out what color to draw the box
                 if grid[row][column]:
                     # Do the math to figure out where the box is
-                    x = (
+                    x = BOARD_MARGIN + (
                         (MARGIN + WIDTH) * (column + offset_x)
                         + MARGIN + WIDTH // 2
                     )
                     y = (
-                        WINDOW_HEIGHT - (MARGIN + HEIGHT) * (row + offset_y)
+                        BOARD_HEIGHT - (MARGIN + HEIGHT) * (row + offset_y)
                         + MARGIN + HEIGHT // 2
                     )
 
