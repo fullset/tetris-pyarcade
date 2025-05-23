@@ -141,6 +141,9 @@ class GameView(arcade.View):
 
         self.stones = []
 
+        self.score = 0
+        self.score_text = None
+
     def new_stone(self):
         """
         Randomly grab a new stone from the bag of stones,
@@ -176,6 +179,9 @@ class GameView(arcade.View):
         self.new_stone()
         self.update_board()
 
+        self.score = 0
+        self.score_text = arcade.Text(f"Score: {self.score}", x=0, y=5, color=(0,0,0,255), font_size=20)
+
     def drop(self):
         """
         Drop the stone down one place.
@@ -194,6 +200,8 @@ class GameView(arcade.View):
                     for i, row in enumerate(self.board[:-1]):
                         if 0 not in row:
                             self.board = remove_row(self.board, i)
+                            self.score += 10
+                            self.score_text.text = f"Score: {self.score}"
                             break
                     else:
                         break
@@ -285,6 +293,7 @@ class GameView(arcade.View):
         self.clear()
         self.board_sprite_list.draw()
         self.draw_grid(self.stone, self.stone_x, self.stone_y)
+        self.score_text.draw()
 
 
 def main():
