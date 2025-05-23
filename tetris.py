@@ -143,6 +143,7 @@ class GameView(arcade.View):
 
         self.score = 0
         self.score_text = None
+        self.next_text = None
 
     def new_stone(self):
         """
@@ -180,7 +181,8 @@ class GameView(arcade.View):
         self.update_board()
 
         self.score = 0
-        self.score_text = arcade.Text(f"Score: {self.score}", x=0, y=5, color=(0,0,0,255), font_size=20)
+        self.score_text = arcade.Text(f"Score: {self.score}", x=10, y=10, color=(0,0,0,255), font_size=20)
+        self.next_text = arcade.Text("Next figure:", x = 2*BOARD_WIDTH + BOARD_WIDTH/5, y=BOARD_HEIGHT * 2 / 3, color=(0,0,0,255), font_size=20)
 
     def drop(self):
         """
@@ -249,6 +251,8 @@ class GameView(arcade.View):
             self.rotate_stone()
         elif key == arcade.key.DOWN:
             self.drop()
+        elif key == arcade.key.SPACE:
+            self.paused = not self.paused
         elif key == arcade.key.ESCAPE:
             self.setup()
 
@@ -294,6 +298,7 @@ class GameView(arcade.View):
         self.board_sprite_list.draw()
         self.draw_grid(self.stone, self.stone_x, self.stone_y)
         self.score_text.draw()
+        self.next_text.draw()
 
 
 def main():
