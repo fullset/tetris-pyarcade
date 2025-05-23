@@ -139,6 +139,10 @@ class GameView(arcade.View):
         self.stone_x = 0
         self.stone_y = 0
 
+        self.next_stone = None
+        self.next_stone_x = 0
+        self.next_stone_y = 0
+
         self.stones = []
 
         self.score = 0
@@ -154,9 +158,15 @@ class GameView(arcade.View):
         """
         if not self.stones:
             self.stones = tetris_shapes[:]
+            random.shuffle(self.stones)
+        elif len(self.stones) < len(tetris_shapes):
+            tmp = tetris_shapes[:]
+            random.shuffle(tmp)
+            tmp.extend(self.stones)
+            self.stones = tmp
 
-        random.shuffle(self.stones)
         self.stone = self.stones.pop()
+        self.next_stone = self.stones[-1]
         self.stone_x = int(COLUMN_COUNT / 2 - len(self.stone[0]) / 2)
         self.stone_y = 0
 
@@ -183,6 +193,9 @@ class GameView(arcade.View):
         self.score = 0
         self.score_text = arcade.Text(f"Score: {self.score}", x=10, y=10, color=(0,0,0,255), font_size=20)
         self.next_text = arcade.Text("Next figure:", x = 2*BOARD_WIDTH + BOARD_WIDTH/5, y=BOARD_HEIGHT * 2 / 3, color=(0,0,0,255), font_size=20)
+
+        self.next_stone_x = 2 * BOARD_WIDTH + int(COLUMN_COUNT / 2 - len(self.stone[0]) / 2)
+        self.next_stone_y = 2 * BOARD_HEIGHT / 3
 
     def drop(self):
         """
@@ -280,6 +293,30 @@ class GameView(arcade.View):
                     sprite = arcade.BasicSprite(elements_texture_list[grid[row][column]])
                     arcade.draw_sprite_rect(sprite, arcade.rect.XYWH(x, y, WIDTH, HEIGHT))
 
+    def draw_next(self, grid):
+        """
+        Draw the grid. Used to draw the falling stones. The board is drawn
+        by the sprite list.
+        """
+        # Draw the grid
+        for row in range(len(grid)):
+            for column in range(len(grid[0])):
+                # Figure out what color to draw the box
+                if grid[row][column]:
+                    # Do the math to figure out where the box is
+                    x = 4 * BOARD_WIDTH / 3 + BOARD_MARGIN + (
+                        (MARGIN + WIDTH) * column
+                        + MARGIN + WIDTH // 2
+                    )
+                    y = (
+                        BOARD_HEIGHT / 2 - (MARGIN + HEIGHT) * row
+                        + MARGIN + HEIGHT // 2
+                    )
+
+                    # Draw the box
+                    sprite = arcade.BasicSprite(elements_texture_list[grid[row][column]])
+                    arcade.draw_sprite_rect(sprite, arcade.rect.XYWH(x, y, WIDTH, HEIGHT))
+
     def update_board(self):
         """
         Update the sprite list to reflect the contents of the 2d grid
@@ -299,6 +336,7 @@ class GameView(arcade.View):
         self.draw_grid(self.stone, self.stone_x, self.stone_y)
         self.score_text.draw()
         self.next_text.draw()
+        self.draw_next(self.next_stone)
 
 
 def main():
