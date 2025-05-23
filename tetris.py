@@ -241,6 +241,8 @@ class GameView(arcade.View):
             self.rotate_stone()
         elif key == arcade.key.DOWN:
             self.drop()
+        elif key == arcade.key.ESCAPE:
+            self.setup()
 
     def draw_grid(self, grid, offset_x, offset_y):
         """
